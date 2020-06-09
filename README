@@ -1,0 +1,42 @@
+This is a python script which generates graphs of loudspeaker directivity
+characteristics from individual measurements. The required dependencies are
+Matplotlib and NumPy.
+
+Usage:
+	loudspeaker_directivity.py [OPTION...]
+
+Options:
+	--interval=n         measurement interval in degrees (default: 10)
+	--mirror-horizontal  use only positive angles for horizontal orbit
+	--mirror-vertical    use only positive angles for vertical orbit
+	-h, --help           show this help text
+
+All input files must have the same number of data points and use the same
+frequencies. No interpolation is done. The expected format is:
+
+	<freq_Hz> <magnitude_dB>
+	...
+
+Everything after <magnitude_dB> (usually just phase) is ignored. Files
+exported from Room EQ Wizard work (use "Export measurement as text").
+
+Lines starting with '*', '#' or ';' are ignored.
+
+Frequency responses must be named {h,v}<angle>.txt. 0° and 180° responses are
+only read from the set of horizontal responses.
+
+The listening axis response must be named listening_axis.txt. This could just
+be a duplicate of one of the other files, or could be the listening window
+instead. If listening_axis.txt is not provided, the axial response (0°) is
+used.
+
+You may specify a correction to apply to all files with correction.txt.
+
+The output files are as follows:
+	directivity.png            - Listening axis, total sound power, and DI
+	directivity_h_pos.png      - Horizontal positive angles
+	directivity_h_neg.png      - Horizontal negative angles
+	directivity_v_pos.png      - Vertical positive angles
+	directivity_v_neg.png      - Vertical negative angles
+	directivity_contour_h.png  - Horizontal contours
+	directivity_contour_v.png  - Vertical contours
