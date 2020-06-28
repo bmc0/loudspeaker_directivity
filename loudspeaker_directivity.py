@@ -156,6 +156,7 @@ listening_axis_level = np.median(listening_axis[np.logical_and(freqs >= 300, fre
 print("listening axis level: {0:g}".format(listening_axis_level))
 y_top = int(round(listening_axis_level/5.))*5+20
 y_bot = y_top-50
+legend_cols = min(8, int(np.ceil(len(weights) / 5.)))
 
 def setup_line_plot():
 	fig, ax = plt.subplots()
@@ -196,7 +197,7 @@ for i in range(0, len(weights)):
 	ax.plot(freqs, orbit_horiz_positive[i], label='{0:g}°'.format(np.rad2deg(weights[i][0])))
 
 ax.set_title('Horizontal 0° to 180°')
-ax.legend(frameon=False)
+ax.legend(frameon=False, ncol=legend_cols)
 
 print('Writing directivity_h_pos.png...')
 plt.savefig('directivity_h_pos.png', dpi=96)
@@ -209,7 +210,7 @@ for i in range(0, len(weights)):
 	ax.plot(freqs, orbit_horiz_positive[i] if i == 0 or i == len(weights)-1 else orbit_horiz_negative[i-1], label='{0:g}°'.format(np.rad2deg(-weights[i][0])))
 
 ax.set_title('Horizontal 0° to -180°')
-ax.legend(frameon=False)
+ax.legend(frameon=False, ncol=legend_cols)
 
 print('Writing directivity_h_neg.png...')
 plt.savefig('directivity_h_neg.png', dpi=96)
@@ -222,7 +223,7 @@ for i in range(0, len(weights)):
 	ax.plot(freqs, orbit_horiz_positive[i] if i == 0 or i == len(weights)-1 else orbit_vert_positive[i-1], label='{0:g}°'.format(np.rad2deg(weights[i][0])))
 
 ax.set_title('Vertical 0° to 180°')
-ax.legend(frameon=False)
+ax.legend(frameon=False, ncol=legend_cols)
 
 print('Writing directivity_v_pos.png...')
 plt.savefig('directivity_v_pos.png', dpi=96)
@@ -235,7 +236,7 @@ for i in range(0, len(weights)):
 	ax.plot(freqs, orbit_horiz_positive[i] if i == 0 or i == len(weights)-1 else orbit_vert_negative[i-1], label='{0:g}°'.format(np.rad2deg(-weights[i][0])))
 
 ax.set_title('Vertical 0° to -180°')
-ax.legend(frameon=False)
+ax.legend(frameon=False, ncol=legend_cols)
 
 print('Writing directivity_v_neg.png...')
 plt.savefig('directivity_v_neg.png', dpi=96)
