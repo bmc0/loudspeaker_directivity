@@ -154,7 +154,7 @@ mpl.rcParams['axes.prop_cycle'] = cycler(color=['#ac3536', '#165c79', '#df8b16',
 
 listening_axis_level = np.median(listening_axis[np.logical_and(freqs >= 300, freqs <= 8000)])
 print("listening axis level: {0:g}".format(listening_axis_level))
-y_top = int(round(listening_axis_level/10.))*10+20
+y_top = int(round(listening_axis_level/5.))*5+20
 y_bot = y_top-50
 
 def setup_line_plot():
