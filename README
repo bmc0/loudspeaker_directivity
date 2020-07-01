@@ -6,10 +6,12 @@ Usage:
 	loudspeaker_directivity.py [OPTION...]
 
 Options:
-	--interval=n         measurement interval in degrees (default: 10)
-	--mirror-horizontal  use only positive angles for horizontal orbit
-	--mirror-vertical    use only positive angles for vertical orbit
-	-h, --help           show this help text
+	--interval=n          measurement interval in degrees (default: 10)
+	--mirror-horizontal   use only positive angles for horizontal orbit
+	--mirror-vertical     use only positive angles for vertical orbit
+	--2034                compute ANSI/CTA-2034-A directivity response
+	--use-listening-axis  use listening axis for DI calculations
+	-h, --help            show this help text
 
 All input files must have the same number of data points and use the same
 frequencies. No interpolation is done. The expected format is:
@@ -40,3 +42,8 @@ The output files are as follows:
 	directivity_v_neg.png      - Vertical negative angles
 	directivity_contour_h.png  - Horizontal contours
 	directivity_contour_v.png  - Vertical contours
+
+The --2034 option adds three more curves to directivity.png: listening window,
+early reflections, and early reflections DI. It also uses the listening window
+curve for the DI calculations instead of the listening axis curve unless the
+--use-listening-axis option is also given.
