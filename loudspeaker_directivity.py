@@ -179,6 +179,10 @@ if cta_2034:
 		orbit_horiz_positive[select_list(weights[:,0],    np.deg2rad([180, 90]))],             # Rear+
 		orbit_horiz_negative[select_list(weights[1:-1,0], np.deg2rad([90]))],                  # Rear-
 	)))
+	predicted_in_room = 10. * np.log10(
+		np.power(10., listening_window / 10.) * 0.12
+		+ np.power(10., early_reflections / 10.) * 0.44
+		+ power_spectrum * 0.44)
 
 ##
 ## Plotting
@@ -228,6 +232,7 @@ if cta_2034:
 ax.plot(freqs, listening_axis, color='k', label='Listening Axis')
 if cta_2034:
 	ax.plot(freqs, early_reflections, color=colors[1], label='Early Reflections')
+	ax.plot(freqs, predicted_in_room, color=colors[7], linestyle=':', label='Predicted In-Room')
 ax.plot(freqs, 10. * np.log10(power_spectrum), color=colors[0], label='Total Sound Power')
 if cta_2034:
 	ax.plot(freqs, (listening_axis if use_listening_axis else listening_window) - early_reflections + y_bot,
