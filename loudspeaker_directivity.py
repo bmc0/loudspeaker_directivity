@@ -192,6 +192,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as tkr
 import matplotlib as mpl
 from cycler import cycler
+import copy
 
 colors = ['#ac3536', '#165c79', '#df8b16', '#333', '#76903e', '#aa5799', '#429b8c', '#888']
 mpl.rcParams['axes.prop_cycle'] = cycler(color=colors)
@@ -313,7 +314,7 @@ def do_contour_plot(x, y, z, title, filename):
 		x, y, z,
 		levels=np.linspace(z_range[0], z_range[1], z_range[1]-z_range[0]+1),
 		extend='both',
-		cmap=plt.cm.magma,
+		cmap=copy.copy(plt.cm.magma),
 	)
 	cs.cmap.set_over('w')
 	cs2 = ax.contour(
