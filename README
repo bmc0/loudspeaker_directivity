@@ -47,3 +47,6 @@ The --2034 option adds four more curves to directivity.png: listening window,
 early reflections, predicted in-room, and early reflections DI. It also uses
 the listening window curve for the DI calculations instead of the listening
 axis curve unless the --use-listening-axis option is also given.
+
+See example_output/ for some example output files. The input data for these
+examples are from Audio Science Review (https://www.audiosciencereview.com/).
