@@ -43,7 +43,7 @@ The output files are as follows:
 	directivity_contour_h.png  - Horizontal contours
 	directivity_contour_v.png  - Vertical contours
 
-The --2034 option adds three more curves to directivity.png: listening window,
-early reflections, and early reflections DI. It also uses the listening window
-curve for the DI calculations instead of the listening axis curve unless the
---use-listening-axis option is also given.
+The --2034 option adds four more curves to directivity.png: listening window,
+early reflections, predicted in-room, and early reflections DI. It also uses
+the listening window curve for the DI calculations instead of the listening
+axis curve unless the --use-listening-axis option is also given.
