@@ -13,14 +13,15 @@ def usage():
 	print('    --interval=n          measurement interval in degrees (default: {0:g})'.format(default_interval))
 	print('    --mirror-horizontal   use only positive angles for horizontal orbit')
 	print('    --mirror-vertical     use only positive angles for vertical orbit')
-	print('    --2034                compute ANSI/CTA-2034-A directivity response')
+	print('    --2034                compute ANSI/CTA-2034-A directivity response as written')
+	print('    --2034-corrected      compute corrected ANSI/CTA-2034-A directivity response')
 	print('    --use-listening-axis  use listening axis for DI calculations')
 	print('    -h, --help            show this help text')
 
 interval = default_interval
 mirror_horiz = False
 mirror_vert = False
-cta_2034 = False
+cta_2034 = 0
 use_listening_axis = False
 
 try:
@@ -30,6 +31,7 @@ try:
 		 'mirror-horizontal',
 		 'mirror-vertical',
 		 '2034',
+		 '2034-corrected',
 		 'use-listening-axis',
 		 'help']
 	)
@@ -51,14 +53,16 @@ for o, a in optlist:
 	elif o == '--mirror-vertical':
 		mirror_vert = True
 	elif o == '--2034':
-		cta_2034 = True
+		cta_2034 = 1
+	elif o == '--2034-corrected':
+		cta_2034 = 2
 	elif o == '--use-listening-axis':
 		use_listening_axis = True
 	else:
 		assert False, 'unhandled option'
 
 if cta_2034 and 10. % interval != 0:
-	print('error: interval must go into 10 evenly for ANSI/CTA 2034 calculation.')
+	print('error: interval must go into 10 evenly for ANSI/CTA-2034-A calculation.')
 	sys.exit(2)
 
 print('Parameters:')
@@ -161,7 +165,31 @@ def select_list(x, l):
 def power_average(x):
 	return 10. * np.log10(np.mean(np.power(10., x / 10.), axis=0))
 
-if cta_2034:
+if cta_2034 == 2:
+	# Correct calculation according to Todd Welti
+	listening_window = power_average(np.concatenate((
+		orbit_horiz_positive[0:1],
+		orbit_horiz_positive[select_list(weights[:,0],    np.deg2rad([10, 20, 30]))],
+		orbit_horiz_negative[select_list(weights[1:-1,0], np.deg2rad([10, 20, 30]))],
+		orbit_vert_positive[select_list(weights[1:-1,0],  np.deg2rad([10]))],
+		orbit_vert_negative[select_list(weights[1:-1,0],  np.deg2rad([10]))],
+	)))
+	early_reflections = power_average(np.stack((
+		power_average(orbit_vert_negative[select_list(weights[1:-1,0],  np.deg2rad([20, 30, 40]))]),          # Floor
+		power_average(orbit_vert_positive[select_list(weights[1:-1,0],  np.deg2rad([40, 50, 60]))]),          # Ceiling
+		power_average(orbit_horiz_positive[select_list(weights[:,0],    np.deg2rad([0, 10, 20, 30]))]),       # Front+
+		power_average(orbit_horiz_negative[select_list(weights[1:-1,0], np.deg2rad([10, 10, 30]))]),          # Front-
+		power_average(orbit_horiz_positive[select_list(weights[:,0],    np.deg2rad([40, 50, 60, 70, 80]))]),  # Side+
+		power_average(orbit_horiz_negative[select_list(weights[1:-1,0], np.deg2rad([40, 50, 60, 70, 80]))]),  # Side-
+		power_average(orbit_horiz_positive[select_list(weights[:,0],    np.deg2rad([90, 100, 110, 120, 130, 140, 150, 160, 170, 180]))]),  # Rear+
+		power_average(orbit_horiz_negative[select_list(weights[1:-1,0], np.deg2rad([90, 100, 110, 120, 130, 140, 150, 160, 170]))]),       # Rear-
+	)))
+	predicted_in_room = 10. * np.log10(
+		np.power(10., listening_window / 10.) * 0.12
+		+ np.power(10., early_reflections / 10.) * 0.44
+		+ power_spectrum * 0.44)
+elif cta_2034:
+	# Literal interpretation of the standard
 	listening_window = power_average(np.concatenate((
 		orbit_horiz_positive[0:1],
 		orbit_horiz_positive[select_list(weights[:,0],    np.deg2rad([10, 20, 30]))],
@@ -240,10 +268,10 @@ if cta_2034:
 		color=colors[1], linestyle='--', label='Early Reflections DI (offset {0:d}dB)'.format(y_bot))
 ax.plot(freqs, (listening_window if cta_2034 and not use_listening_axis else listening_axis) - (10. * np.log10(power_spectrum)) + y_bot,
 	color=colors[0], linestyle='--', label='{0:s} (offset {1:d}dB)'.format('Sound Power DI' if cta_2034 else 'Directivity Index', y_bot))
-#plt.hlines(norm_level, 20., 20000., colors='grey', linestyles=':', label='Calculated {0:s} Level'.format('Listening Window' if cta_2034 else 'Listening Axis'))
+#plt.hlines(norm_level, 20., 20000., colors='grey', linestyles=':', label='Calculated {0:s} Level'.format('Listening Window' if cta_2034 and not use_listening_axis else 'Listening Axis'))
 
 if cta_2034:
-	ax.set_title('ANSI/CTA-2034-A Directivity Response (DI Ref: {0:s})'.format('Listening Axis' if use_listening_axis else 'Listening Window'))
+	ax.set_title('{0:s} Directivity Response (DI Ref: {1:s})'.format('ANSI/CTA-2034-A (corrected)' if cta_2034 == 2 else 'ANSI/CTA-2034-A', 'Listening Axis' if use_listening_axis else 'Listening Window'))
 ax.legend(frameon=False)
 
 print('Writing directivity.png...')

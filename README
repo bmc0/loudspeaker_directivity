@@ -9,7 +9,10 @@ Options:
 	--interval=n          measurement interval in degrees (default: 10)
 	--mirror-horizontal   use only positive angles for horizontal orbit
 	--mirror-vertical     use only positive angles for vertical orbit
-	--2034                compute ANSI/CTA-2034-A directivity response
+	--2034                compute ANSI/CTA-2034-A directivity response as
+	                      written
+	--2034-corrected      compute corrected ANSI/CTA-2034-A directivity
+	                      response
 	--use-listening-axis  use listening axis for DI calculations
 	-h, --help            show this help text
 
@@ -47,6 +50,12 @@ The --2034 option adds four more curves to directivity.png: listening window,
 early reflections, predicted in-room, and early reflections DI. It also uses
 the listening window curve for the DI calculations instead of the listening
 axis curve unless the --use-listening-axis option is also given.
+
+The --2034-corrected option is the same as --2034, except the calculation of
+early reflections is done as described by Todd Welti in this post:
+https://www.audiosciencereview.com/forum/index.php?threads/spinorama-also-known-as-cta-cea-2034-but-that-sounds-dull-apparently.10862/post-343970
+Apparently this is the method used in the original paper by Allan Devantier:
+"Characterizing the Amplitude Response of Loudspeaker Systems" (2002).
 
 See example_output/ for some example output files. The input data for these
 examples are from Audio Science Review (https://www.audiosciencereview.com/).
